@@ -19,8 +19,11 @@ processors:
       hostname_sources: [ "os" ]
   resource:
     attributes:
-      - key: service.name
+      - key: otel.service.name
         value: "serviceName"
+        action: upsert
+      - key: X-B3-TraceId
+        value: "traceId"
         action: upsert
 exporters:
   clickhouse:
@@ -52,6 +55,10 @@ service:
       processors: [ memory_limiter, resourcedetection/system, resource, batch ]
       exporters: [ clickhouse ]
     traces:
+      receivers: [ otlp ]
+      processors: [ memory_limiter, resourcedetection/system, resource, batch ]
+      exporters: [ clickhouse ]
+    metrics:
       receivers: [ otlp ]
       processors: [ memory_limiter, resourcedetection/system, resource, batch ]
       exporters: [ clickhouse ]
